@@ -19,7 +19,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 
 .shell{display:flex;flex:1;min-height:calc(100vh - 52px)}
 .side{width:var(--side-w);flex:none;background:var(--navy);border-inline-end:1px solid var(--line);
-  padding:20px 14px;display:flex;flex-direction:column;gap:24px;position:sticky;top:0;height:100vh}
+  padding:20px 14px;display:flex;flex-direction:column;gap:24px;position:sticky;top:0;height:calc(100vh - 52px)}
 .brand{display:flex;align-items:center;gap:10px;padding:4px 8px}
 .brand-ico{width:30px;height:30px;color:var(--accent)}
 .brand-name{font-weight:800;letter-spacing:.2em;font-size:1.25rem}
