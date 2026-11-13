@@ -196,8 +196,9 @@ def _int(name, default, lo=1, hi=500):
 
 
 def _session():
-    v = request.args.get("session")
-    return v if v and len(v) <= 40 and v.replace("-", "").replace("_", "").isalnum() else None
+    # Data is already confined to the visitor-specific database. Never trust a
+    # client-supplied query parameter as an authorization identity.
+    return None
 
 
 def _engine_call(fn, *a, **kw):
@@ -301,7 +302,7 @@ def engine_incident(iid):
 @bp.get("/stream")
 @protected
 def stream():
-    q = bus.subscribe()
+    q = bus.subscribe(db.current_owner_session())
 
     def gen():
         try:
@@ -329,13 +330,13 @@ def lab_scenarios():
 @bp.get("/lab/status")
 @protected
 def lab_status():
-    return jsonify({"ok": True, **simulator.lab.status()})
+    return jsonify({"ok": True, **simulator.get_lab().status()})
 
 
 @bp.post("/lab/<action>")
 @protected
 def lab_control(action):
-    lab = simulator.lab
+    lab = simulator.get_lab()
     if action == "start":
         body = request.get_json(silent=True) or {}
         speed = body.get("speed", 1)
