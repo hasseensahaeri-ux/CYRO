@@ -6,7 +6,7 @@
 <meta name="csrf-token" content="{{ csrf_token }}">
 <title>CYRO — Intelligent Cybersecurity Platform</title>
 <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css', v='20261113-2') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css', v='20261113-3') }}">
 </head>
 <body>
 <svg width="0" height="0" class="sprite" aria-hidden="true">
@@ -50,8 +50,15 @@
       {% endfor %}
       {% endfor %}
     </nav>
-    <p class="tagline" data-i18n="tagline"></p>
-    <p class="developer-credit" dir="rtl">تطوير: <strong>حسين عادل</strong></p>
+    <div class="side-meta-stack" aria-label="معلومات المنصة والمطور">
+      <p class="tagline side-meta-item" data-i18n="tagline">
+        <svg class="ico side-meta-icon" aria-hidden="true"><use href="#i-shield"/></svg>
+      </p>
+      <p class="developer-credit side-meta-item" dir="rtl">
+        <svg class="ico side-meta-icon" aria-hidden="true"><use href="#i-user"/></svg>
+        <span>تطوير: <strong>حسين عادل</strong></span>
+      </p>
+    </div>
   </aside>
   <div class="scrim" id="scrim"></div>
 
