@@ -10,7 +10,7 @@ import config
 config.DB_PATH = pathlib.Path(tempfile.mkdtemp()) / "shared-default.sqlite3"
 from app import create_app
 from backend import db
-from backend.engine import bus, simulator
+from backend.engine import bus, core, simulator, store
 
 
 class VisitorIsolationTest(unittest.TestCase):
@@ -37,6 +37,8 @@ class VisitorIsolationTest(unittest.TestCase):
             result = {"url": "https://example.com/", "verdict": "safe", "score": 0, "findings": []}
             db.record_scan("url", result)
             rid = db.create_report("private report", None)
+            db.record_quiz({"score": 1, "total": 1, "percent": 100, "level": "test"})
+            db.record_file_history("private.txt", 10, "a" * 64, None)
             self.assertIsNotNone(rid)
         finally:
             db.reset_owner(token)
@@ -46,6 +48,32 @@ class VisitorIsolationTest(unittest.TestCase):
         self.assertEqual(len(self.a.get("/api/reports").get_json()["reports"]), 1)
         self.assertEqual(len(self.b.get("/api/reports").get_json()["reports"]), 0)
         self.assertEqual(self.b.get(f"/api/reports/{rid}/pdf").status_code, 404)
+        token = db.set_owner(self.owner_b)
+        try:
+            self.assertEqual(db.list_file_history(), [])
+        finally:
+            db.reset_owner(token)
+
+
+    def test_soc_events_alerts_and_incidents_are_not_shared(self):
+        token = db.set_owner(self.owner_a)
+        try:
+            core.reset_session("private-soc-test")
+            results = [core.ingest("login_failed", "203.0.113.91", "admin", {},
+                                   session="private-soc-test", ts=1_700_000_000 + i)
+                       for i in range(5)]
+            self.assertTrue(results[-1]["incidents"])
+            incident_id = results[-1]["incidents"][0]
+        finally:
+            db.reset_owner(token)
+
+        token = db.set_owner(self.owner_b)
+        try:
+            self.assertIsNone(store.get_incident(incident_id))
+            self.assertEqual(store.list_events(None, 100), [])
+            self.assertEqual(store.list_alerts(None, 100), [])
+        finally:
+            db.reset_owner(token)
 
     def test_event_bus_never_delivers_to_another_visitor(self):
         ta = db.set_owner(self.owner_a)
