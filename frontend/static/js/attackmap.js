@@ -53,8 +53,11 @@
 
     function colorFor(node) { return node.local ? col.accent : node.last === "dropped" ? col.safe : col.danger; }
 
+    let lastPaint = 0;
     function frame(now) {
       if (!box.isConnected) return;
+      if (document.hidden || now - lastPaint < 40) { requestAnimationFrame(frame); return; }
+      lastPaint = now;
       octx.setTransform(S.dpr, 0, 0, S.dpr, 0, 0);
       octx.clearRect(0, 0, S.w, S.h);
       const sp = proj(server[1], server[0]);
