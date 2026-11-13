@@ -3,6 +3,7 @@ import hashlib
 import json
 import sqlite3
 import threading
+import time
 from contextvars import ContextVar
 from datetime import date, timedelta
 from urllib.parse import urlsplit
@@ -293,3 +294,28 @@ def list_file_history(limit=30):
                           "ORDER BY id DESC LIMIT ?", (max(1, min(int(limit), 200)),))
     finally:
         con.close()
+
+
+# ---- housekeeping: remove stale per-visitor databases ----
+VISITOR_TTL_DAYS = 30
+_last_cleanup = 0.0
+
+
+def cleanup_visitors():
+    """Delete visitor DB files untouched for VISITOR_TTL_DAYS (runs at most hourly)."""
+    global _last_cleanup
+    now = time.time()
+    if now - _last_cleanup < 3600:
+        return
+    _last_cleanup = now
+    folder = config.BASE_DIR / "data" / "visitors"
+    if not folder.is_dir():
+        return
+    cutoff = now - VISITOR_TTL_DAYS * 86400
+    for f in folder.glob("*.sqlite3*"):
+        try:
+            if f.stat().st_mtime < cutoff:
+                f.unlink()
+                _INITIALIZED.discard(f)
+        except OSError:
+            pass

@@ -3,6 +3,7 @@ import os
 import secrets
 from datetime import timedelta
 
+from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import Flask, abort, g, jsonify, render_template, request, session as browser_session
 
 import config
@@ -39,6 +40,8 @@ def create_app():
         SESSION_COOKIE_SECURE=os.environ.get("SESSION_COOKIE_SECURE", "true" if os.environ.get("RENDER") else "false").lower() == "true",
         PERMANENT_SESSION_LIFETIME=timedelta(days=30),
     )
+    # Behind Render's proxy: use the real client IP (rate limiting) and HTTPS scheme.
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
     db.init_db()
     app.register_blueprint(api_bp)
 
@@ -53,6 +56,7 @@ def create_app():
         browser_session.permanent = True
         g.cyro_owner_token = db.set_owner(visitor_id)
         db.init_db()
+        db.cleanup_visitors()
 
     @app.teardown_request
     def release_anonymous_visitor(_error=None):

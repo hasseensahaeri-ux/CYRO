@@ -12,6 +12,17 @@ from flask import jsonify, request, session
 import config
 
 _hits = defaultdict(deque)
+_last_prune = 0.0
+
+
+def _prune(now):
+    """Drop idle IPs so the table cannot grow forever."""
+    global _last_prune
+    if now - _last_prune < 60:
+        return
+    _last_prune = now
+    for ip in [k for k, d in list(_hits.items()) if not d or now - d[-1] > 60]:
+        _hits.pop(ip, None)
 
 
 class BlockedHost(Exception):
@@ -42,6 +53,7 @@ def protected(fn):
         if len(q) >= config.RATE_LIMIT_PER_MIN:
             return api_error("rate_limit", 429)
         q.append(now)
+        _prune(now)
         return fn(*a, **kw)
     return wrapper
 

@@ -50,14 +50,10 @@
       {% endfor %}
       {% endfor %}
     </nav>
-    <div class="side-meta-stack" aria-label="معلومات المنصة والمطور">
-      <p class="tagline side-meta-item" data-i18n="tagline">
-        <svg class="ico side-meta-icon" aria-hidden="true"><use href="#i-shield"/></svg>
-      </p>
-      <p class="developer-credit side-meta-item" dir="rtl">
-        <svg class="ico side-meta-icon" aria-hidden="true"><use href="#i-user"/></svg>
-        <span>تطوير: <strong>حسين عادل</strong></span>
-      </p>
+    <div class="side-meta-stack" aria-label="CYRO">
+      <p class="tagline side-meta-item" data-i18n="tagline"></p>
+      <p class="side-copy"><bdi>© CYRO 2026</bdi><span aria-hidden="true"> — </span><span data-i18n="foot_rights"></span></p>
+      <p class="side-copy side-dev" data-i18n="foot_dev"></p>
     </div>
   </aside>
   <div class="scrim" id="scrim"></div>
@@ -72,8 +68,9 @@
     <main class="content">{% block content %}{% endblock %}</main>
   </div>
 </div>
-<footer class="site-footer" aria-label="حقوق النشر" dir="rtl">
-  <span class="footer-rights"><bdi>© 2026 CYRO</bdi><span class="footer-separator" aria-hidden="true">•</span><span>جميع الحقوق محفوظة لدى CYRO</span></span>
+<footer class="site-footer" data-i18n-aria="foot_label">
+  <p class="footer-line"><bdi>© 2026 CYRO</bdi><span class="footer-separator" aria-hidden="true">•</span><span data-i18n="foot_rights"></span></p>
+  <p class="footer-line footer-dev" data-i18n="foot_dev"></p>
 </footer>
 <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
 <script src="{{ url_for('static', filename='js/i18n.js', v='20261113-2') }}"></script>
