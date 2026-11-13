@@ -30,6 +30,16 @@ class VisitorIsolationTest(unittest.TestCase):
     def test_each_browser_has_a_different_signed_visitor_identity(self):
         self.assertNotEqual(self.owner_a, self.owner_b)
 
+    def test_csrf_tokens_cannot_be_reused_between_visitors(self):
+        with self.a.session_transaction() as sa:
+            token_a = sa["csrf_token"]
+        with self.b.session_transaction() as sb:
+            token_b = sb["csrf_token"]
+        self.assertNotEqual(token_a, token_b)
+        response = self.b.post("/api/comm/reset", json={"session": "comm-private01"},
+                               headers={"X-CSRF-Token": token_a})
+        self.assertEqual(response.status_code, 403)
+
     def test_scans_and_reports_are_not_shared(self):
         token = db.set_owner(self.owner_a)
         try:
