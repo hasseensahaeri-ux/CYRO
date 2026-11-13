@@ -46,6 +46,7 @@ def create_app():
         if not visitor_id:
             visitor_id = secrets.token_urlsafe(32)
             browser_session["visitor_id"] = visitor_id
+        if not browser_session.get("csrf_token"):
             browser_session["csrf_token"] = secrets.token_urlsafe(32)
         browser_session.permanent = True
         g.cyro_owner_token = db.set_owner(visitor_id)
