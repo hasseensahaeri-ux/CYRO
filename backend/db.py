@@ -1,12 +1,40 @@
 """SQLite storage. All queries are parameterised. Passwords are never stored."""
+import hashlib
 import json
 import sqlite3
+import threading
+from contextvars import ContextVar
 from datetime import date, timedelta
 from urllib.parse import urlsplit
 
 import config
 
 NOW = "strftime('%Y-%m-%dT%H:%M:%S','now','localtime')"
+
+# Each anonymous browser receives a physically separate SQLite database.
+_OWNER = ContextVar("cyro_visitor_owner", default=None)
+_INIT_LOCK = threading.Lock()
+_INITIALIZED = set()
+
+
+def set_owner(owner):
+    return _OWNER.set(owner)
+
+
+def reset_owner(token):
+    _OWNER.reset(token)
+
+
+def current_owner_session():
+    return _OWNER.get()
+
+
+def _database_path():
+    owner = _OWNER.get()
+    if not owner:
+        return config.DB_PATH
+    digest = hashlib.sha256(owner.encode("utf-8")).hexdigest()
+    return config.BASE_DIR / "data" / "visitors" / (digest + ".sqlite3")
 
 SCHEMA = f"""
 CREATE TABLE IF NOT EXISTS scans(
@@ -88,7 +116,9 @@ CREATE INDEX IF NOT EXISTS idx_results_scan ON scan_results(scan_id);
 
 
 def connect():
-    con = sqlite3.connect(config.DB_PATH, timeout=10)
+    path = _database_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    con = sqlite3.connect(path, timeout=10)
     con.row_factory = sqlite3.Row
     con.execute("PRAGMA foreign_keys=ON")
     con.execute("PRAGMA synchronous=NORMAL")
@@ -96,14 +126,21 @@ def connect():
 
 
 def init_db():
-    config.DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    con = connect()
-    try:
-        con.execute("PRAGMA journal_mode=WAL")
-        con.executescript(SCHEMA)
-        con.commit()
-    finally:
-        con.close()
+    path = _database_path()
+    if path in _INITIALIZED:
+        return
+    with _INIT_LOCK:
+        if path in _INITIALIZED:
+            return
+        path.parent.mkdir(parents=True, exist_ok=True)
+        con = connect()
+        try:
+            con.execute("PRAGMA journal_mode=WAL")
+            con.executescript(SCHEMA)
+            con.commit()
+            _INITIALIZED.add(path)
+        finally:
+            con.close()
 
 
 def safe_target(kind, result):
