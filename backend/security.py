@@ -7,11 +7,10 @@ import time
 from collections import defaultdict, deque
 from functools import wraps
 
-from flask import jsonify, request
+from flask import jsonify, request, session
 
 import config
 
-CSRF_TOKEN = secrets.token_urlsafe(32)
 _hits = defaultdict(deque)
 
 
@@ -33,7 +32,8 @@ def protected(fn):
     def wrapper(*a, **kw):
         if request.method == "POST":
             sent = request.headers.get("X-CSRF-Token", "")
-            if not hmac.compare_digest(sent, CSRF_TOKEN):
+            expected = session.get("csrf_token", "")
+            if not expected or not hmac.compare_digest(sent, expected):
                 return api_error("csrf", 403)
         now = time.time()
         q = _hits[request.remote_addr]
