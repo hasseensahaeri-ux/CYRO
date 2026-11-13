@@ -27,6 +27,8 @@ def create_app():
     app = Flask(__name__, template_folder="frontend/templates",
                 static_folder="frontend/static")
     app.config["MAX_CONTENT_LENGTH"] = config.MAX_CONTENT_LENGTH
+    # Cache versionless static assets briefly; browser revalidates after deploys.
+    app.config["SEND_FILE_MAX_AGE_DEFAULT"] = timedelta(hours=1)
     app.secret_key = os.environ.get("CYRO_SECRET_KEY") or secrets.token_hex(32)
     if os.environ.get("RENDER") and not os.environ.get("CYRO_SECRET_KEY"):
         raise RuntimeError("CYRO_SECRET_KEY must be configured in production")
@@ -72,6 +74,8 @@ def create_app():
         resp.headers["X-Frame-Options"] = "DENY"
         if request.path.startswith("/api/"):
             resp.headers["Cache-Control"] = "no-store"
+        elif request.path.startswith("/static/"):
+            resp.headers["Cache-Control"] = "public, max-age=3600"
         return resp
 
     @app.errorhandler(413)
