@@ -115,7 +115,8 @@ CREATE INDEX IF NOT EXISTS idx_results_scan ON scan_results(scan_id);
 """
 
 
-def connect():
+def _connect_raw():
+    """Open SQLite without triggering schema initialization (used only by init_db)."""
     path = _database_path()
     path.parent.mkdir(parents=True, exist_ok=True)
     con = sqlite3.connect(path, timeout=10)
@@ -123,6 +124,13 @@ def connect():
     con.execute("PRAGMA foreign_keys=ON")
     con.execute("PRAGMA synchronous=NORMAL")
     return con
+
+
+def connect():
+    # Every consumer gets a fully initialized owner-scoped database, including
+    # background workers and code paths that do not pass through Flask startup.
+    init_db()
+    return _connect_raw()
 
 
 def init_db():
@@ -133,7 +141,7 @@ def init_db():
         if path in _INITIALIZED:
             return
         path.parent.mkdir(parents=True, exist_ok=True)
-        con = connect()
+        con = _connect_raw()
         try:
             con.execute("PRAGMA journal_mode=WAL")
             con.executescript(SCHEMA)
