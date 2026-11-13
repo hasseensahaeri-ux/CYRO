@@ -2,7 +2,7 @@
 (function () {
   const DICT = {
     ar: {
-      menu: "القائمة", tagline: "🛡️ منصة الأمن السيبراني الذكية", nav_g_platform: "المنصة", nav_g_tools: "أدوات الحماية", nav_g_reports: "التقارير والمتابعة",
+      menu: "القائمة", tagline: "🛡️ منصة الأمن السيبراني الذكية", foot_rights: "جميع الحقوق محفوظة", foot_dev: "تطوير: حسين عادل", foot_label: "حقوق النشر", nav_g_platform: "المنصة", nav_g_tools: "أدوات الحماية", nav_g_reports: "التقارير والمتابعة",
       ss_secure: "آمن", ss_elevated: "مرتفع الخطورة", ss_critical: "حرج", sys_pill: "حالة النظام", toast_alert: "تنبيه جديد", sev_low: "منخفضة", sev_medium: "متوسطة", sev_high: "عالية", sev_critical: "حرجة",
       nav_dash: "لوحة التحكم", nav_lab: "مختبر المحاكاة", nav_comm: "مختبر الاتصال الآمن", nav_soc: "مركز العمليات SOC", nav_url: "فاحص الروابط", nav_phish: "كاشف التصيد",
       nav_pass: "محلل كلمات المرور", nav_file: "سلامة الملفات",
@@ -20,7 +20,7 @@
       load_err: "تعذر تحميل البيانات من الخادم."
     },
     en: {
-      menu: "Menu", tagline: "🛡️ Intelligent Cybersecurity Platform", nav_g_platform: "Platform", nav_g_tools: "Protection tools", nav_g_reports: "Reports",
+      menu: "Menu", tagline: "🛡️ Intelligent Cybersecurity Platform", foot_rights: "All rights reserved", foot_dev: "Developed by Hussein Adel", foot_label: "Copyright", nav_g_platform: "Platform", nav_g_tools: "Protection tools", nav_g_reports: "Reports",
       ss_secure: "Secure", ss_elevated: "Elevated", ss_critical: "Critical", sys_pill: "System status", toast_alert: "New alert", sev_low: "Low", sev_medium: "Medium", sev_high: "High", sev_critical: "Critical",
       nav_dash: "Dashboard", nav_lab: "Attack Lab", nav_comm: "Secure Comm Lab", nav_soc: "SOC Center", nav_url: "URL Scanner", nav_phish: "Phishing Detector",
       nav_pass: "Password Analyzer", nav_file: "File Integrity",
