@@ -29,7 +29,15 @@ def wait_done(timeout=90):
 class LabTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        # Keep the same local-development owner active in the test thread.
+        # The simulator worker restores this owner independently because
+        # ContextVars are not inherited by newly-created threads.
+        cls.owner_token = db.set_owner("local-development")
         db.init_db()
+
+    @classmethod
+    def tearDownClass(cls):
+        db.reset_owner(cls.owner_token)
 
     def tearDown(self):
         lab.reset()
