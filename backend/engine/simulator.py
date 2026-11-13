@@ -8,6 +8,7 @@ import threading
 import time
 
 import config
+from .. import db
 from . import bus, core, store
 from .rules import bi
 from ..scanners import file_check
@@ -200,7 +201,8 @@ def catalog():
 
 # ---------------- runner ----------------
 class Lab:
-    def __init__(self):
+    def __init__(self, owner):
+        self.owner = owner
         self.lock = threading.RLock()
         self._stop, self._pause = threading.Event(), threading.Event()
         self.thread = None
@@ -287,6 +289,7 @@ class Lab:
             time.sleep(d); left -= d
 
     def _run(self, plan, session, speed, t0):
+        owner_token = db.set_owner(self.owner)
         completed = False
         try:
             prev = 0.0
@@ -314,8 +317,10 @@ class Lab:
                     elif self.state in ("running", "paused"):
                         self.state = "stopped"
                     self._publish_state()
+            db.reset_owner(owner_token)
 
     def _summary(self, session):
+        session = core.scoped_session(session)
         alerts = store.list_alerts(session, 200)
         incs = store.list_incidents(session, 200)
         counts = store.session_counts(session)
@@ -336,4 +341,15 @@ class Lab:
                 "events": counts["events"], "blocked_attempts": counts["blocked"]}
 
 
-lab = Lab()
+_labs = {}
+_labs_lock = threading.Lock()
+
+
+def get_lab():
+    owner = db.current_owner_session()
+    if owner is None:
+        owner = "local-development"
+    with _labs_lock:
+        if owner not in _labs:
+            _labs[owner] = Lab(owner)
+        return _labs[owner]
