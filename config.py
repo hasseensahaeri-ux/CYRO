@@ -13,4 +13,4 @@ RATE_LIMIT_PER_MIN = 240
 TLS_TIMEOUT = 4
 
 # Where the protected lab server is drawn on the attack map (lat, lon). Change to your own location.
-LAB_SERVER_GEO = (24.7, 46.7)
+LAB_SERVER_GEO = (15.3694, 44.1910)  # Sana'a, Yemen (approximate lab server location)

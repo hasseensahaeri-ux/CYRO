@@ -3,3 +3,8 @@ data/visitors/
 *.sqlite3
 *.sqlite3-wal
 *.sqlite3-shm
+
+# Generated Python bytecode and local runtime databases
+__pycache__/
+*.py[cod]
+data/cyberguard.db
