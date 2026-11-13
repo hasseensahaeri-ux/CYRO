@@ -12,7 +12,9 @@ config.DB_PATH = pathlib.Path(tempfile.mkdtemp()) / "lab.db"
 from backend import db                               # noqa: E402
 from backend.engine import simulator, store          # noqa: E402
 
-lab = simulator.lab
+# The simulator is owner-scoped; tests without a request context use the
+# local-development owner through the public factory.
+lab = simulator.get_lab()
 
 
 def wait_done(timeout=90):
