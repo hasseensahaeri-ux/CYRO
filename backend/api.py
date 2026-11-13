@@ -1,5 +1,5 @@
 """JSON API. Every route is CSRF-checked (POST) and rate-limited."""
-from flask import Blueprint, Response, jsonify, request, stream_with_context
+from flask import Blueprint, Response, jsonify, request
 
 import config
 import hashlib
@@ -317,7 +317,7 @@ def stream():
                 yield f"event: {m['topic']}\ndata: {json.dumps(m['data'], ensure_ascii=False)}\n\n"
         finally:
             bus.unsubscribe(q)
-    return Response(stream_with_context(gen()), mimetype="text/event-stream",
+    return Response(gen(), mimetype="text/event-stream",
                     headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"})
 
 
