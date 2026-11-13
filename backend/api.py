@@ -196,9 +196,10 @@ def _int(name, default, lo=1, hi=500):
 
 
 def _session():
-    # Data is already confined to the visitor-specific database. Never trust a
-    # client-supplied query parameter as an authorization identity.
-    return None
+    # This is only a display/query filter inside the already isolated visitor DB;
+    # it is never used to authorize access to another visitor's records.
+    value = request.args.get("session", "")
+    return value if value and len(value) <= 128 and re.fullmatch(r"[A-Za-z0-9:_-]+", value) else None
 
 
 def _engine_call(fn, *a, **kw):
