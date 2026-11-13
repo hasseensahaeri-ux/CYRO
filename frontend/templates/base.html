@@ -51,7 +51,7 @@
       {% endfor %}
     </nav>
     <p class="tagline" data-i18n="tagline"></p>
-    <p class="developer-credit">المطور: حسين عادل</p>
+    <p class="developer-credit">تطوير: حسين عادل</p>
   </aside>
   <div class="scrim" id="scrim"></div>
 
@@ -65,9 +65,14 @@
     <main class="content">{% block content %}{% endblock %}</main>
   </div>
 </div>
-<footer class="site-footer">
-  <span>جميع الحقوق محفوظة لدى CYRO © 2026</span>
-  <span>المطور: حسين عادل</span>
+<footer class="site-footer" aria-label="حقوق النشر">
+  <div class="footer-signature">
+    <svg class="footer-mark" aria-hidden="true"><use href="#i-logo"/></svg>
+    <span>CYRO</span>
+  </div>
+  <p class="footer-rights">© 2026 CYRO <span>جميع الحقوق محفوظة</span></p>
+  <span class="footer-divider" aria-hidden="true"></span>
+  <p class="footer-credit">تطوير <strong>حسين عادل</strong></p>
 </footer>
 <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
 <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
