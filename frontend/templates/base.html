@@ -6,7 +6,7 @@
 <meta name="csrf-token" content="{{ csrf_token }}">
 <title>CYRO — Intelligent Cybersecurity Platform</title>
 <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css', v='20261113-2') }}">
 </head>
 <body>
 <svg width="0" height="0" class="sprite" aria-hidden="true">
@@ -66,11 +66,11 @@
   </div>
 </div>
 <footer class="site-footer" aria-label="حقوق النشر" dir="rtl">
-  <span class="footer-rights">© 2026 CYRO — جميع الحقوق محفوظة</span>
+  <span class="footer-rights"><bdi>© 2026 CYRO</bdi><span class="footer-separator" aria-hidden="true">•</span><span>جميع الحقوق محفوظة لدى CYRO</span></span>
 </footer>
 <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
-<script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/i18n.js', v='20261113-2') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js', v='20261113-2') }}"></script>
 {% block scripts %}{% endblock %}
 </body>
 </html>
