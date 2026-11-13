@@ -56,17 +56,17 @@ class LabTest(unittest.TestCase):
     def test_port_scan(self):
         r = self.run_scenario("port_scan")
         self.assertTrue(r["detected"]); self.assertEqual(r["mitigated"], 1); self.assertGreater(r["blocked_attempts"], 0)
-        self.assertEqual([a["source"] for a in store.list_alerts(lab.session)], [simulator.ATTACKER_2])
+        self.assertEqual([a["source"] for a in store.list_alerts(core.scoped_session(lab.session))], [simulator.ATTACKER_2])
 
     def test_ddos(self):
         r = self.run_scenario("ddos")
         self.assertTrue(r["detected"]); self.assertEqual(r["mitigated"], 1); self.assertGreater(r["blocked_attempts"], 50)
-        self.assertEqual([a["rule_id"] for a in store.list_alerts(lab.session)], ["CR-ST-002"])         # no per-bot false alerts
+        self.assertEqual([a["rule_id"] for a in store.list_alerts(core.scoped_session(lab.session))], ["CR-ST-002"])         # no per-bot false alerts
 
     def test_phishing(self):
         r = self.run_scenario("phishing")
         self.assertTrue(r["detected"]); self.assertEqual(r["failed"], 0)
-        senders = {a["source"] for a in store.list_alerts(lab.session)}
+        senders = {a["source"] for a in store.list_alerts(core.scoped_session(lab.session))}
         self.assertNotIn("colleague@university.edu", senders); self.assertNotIn("newsletter@library.edu", senders)
         self.assertGreaterEqual(r["blocked_attempts"], 1)                      # the post-response click was blocked
 
@@ -74,7 +74,7 @@ class LabTest(unittest.TestCase):
         r = self.run_scenario("malware")
         self.assertTrue(r["detected"]); self.assertEqual(r["incidents"].__len__(), 3); self.assertEqual(r["failed"], 0)
         self.assertGreaterEqual(r["blocked_attempts"], 2)
-        names = {a["source"] for a in store.list_alerts(lab.session)}
+        names = {a["source"] for a in store.list_alerts(core.scoped_session(lab.session))}
         self.assertNotIn("meeting-notes.txt", names); self.assertNotIn("team-photo.jpg", names)
 
     def test_map_geo_and_top_sources(self):
@@ -101,7 +101,7 @@ class LabTest(unittest.TestCase):
         sess = lab.session
         self.assertTrue(store.session_counts(core.scoped_session(sess))["events"] > 0)
         self.assertTrue(lab.reset()); self.assertEqual(lab.state, "idle")
-        self.assertEqual(store.session_counts(sess)["events"], 0)                         # reset removed the run's data
+        self.assertEqual(store.session_counts(core.scoped_session(sess))["events"], 0)                         # reset removed the run's data
 
 
 if __name__ == "__main__":
