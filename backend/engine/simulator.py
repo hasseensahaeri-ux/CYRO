@@ -290,6 +290,9 @@ class Lab:
 
     def _run(self, plan, session, speed, t0):
         owner_token = db.set_owner(self.owner)
+        # ContextVars do not automatically inherit Flask's request context in a new
+        # worker thread. Initialize this visitor's database after restoring its owner.
+        db.init_db()
         completed = False
         try:
             prev = 0.0
