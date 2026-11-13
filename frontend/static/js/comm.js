@@ -247,8 +247,8 @@
     if (!S.incs.size) $("defList").replaceChildren(el("p", "empty", tt("df_empty")));
     S.incs.forEach(paintInc);
   }
-  CG.on("timeline", function (d) { if (d.session !== S.session) return; const c = incCard(d.incident_id); c.entries.push({ stage: d.stage, message: d.message }); paintInc(c); });
-  CG.on("incident", function (d) { if (d.session !== S.session) return; const c = incCard(d.id); c.title = d.title; c.severity = d.severity; c.status = d.status; paintInc(c); });
+  CG.on("timeline", function (d) { if (!String(d.session).endsWith(":" + S.session)) return; const c = incCard(d.incident_id); c.entries.push({ stage: d.stage, message: d.message }); paintInc(c); });
+  CG.on("incident", function (d) { if (!String(d.session).endsWith(":" + S.session)) return; const c = incCard(d.id); c.title = d.title; c.severity = d.severity; c.status = d.status; paintInc(c); });
 
   // ---------- scene animation ----------
   const zone = $("zone"), track = $("track");

@@ -2,19 +2,21 @@
 import queue
 import threading
 
-_subs, _lock, _seq = set(), threading.Lock(), 0
+from .. import db
+
+_subs, _lock, _seq = {}, threading.Lock(), 0
 
 
-def subscribe():
+def subscribe(owner=None):
     q = queue.Queue(maxsize=2000)
     with _lock:
-        _subs.add(q)
+        _subs[q] = owner if owner is not None else db.current_owner_session()
     return q
 
 
 def unsubscribe(q):
     with _lock:
-        _subs.discard(q)
+        _subs.pop(q, None)
 
 
 def publish(topic, data):
@@ -22,7 +24,10 @@ def publish(topic, data):
     with _lock:
         _seq += 1
         msg = {"seq": _seq, "topic": topic, "data": data}
-        for q in list(_subs):
+        owner = db.current_owner_session()
+        for q, subscriber_owner in list(_subs.items()):
+            if subscriber_owner != owner:
+                continue
             try:
                 q.put_nowait(msg)
             except queue.Full:

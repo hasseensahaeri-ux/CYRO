@@ -1,5 +1,9 @@
 """CYRO - Intelligent Cybersecurity Platform (entry point)."""
-from flask import Flask, abort, jsonify, render_template, request
+import os
+import secrets
+from datetime import timedelta
+
+from flask import Flask, abort, g, jsonify, render_template, request, session as browser_session
 
 import config
 from backend import db, security
@@ -23,12 +27,40 @@ def create_app():
     app = Flask(__name__, template_folder="frontend/templates",
                 static_folder="frontend/static")
     app.config["MAX_CONTENT_LENGTH"] = config.MAX_CONTENT_LENGTH
+    app.secret_key = os.environ.get("CYRO_SECRET_KEY") or secrets.token_hex(32)
+    if os.environ.get("RENDER") and not os.environ.get("CYRO_SECRET_KEY"):
+        raise RuntimeError("CYRO_SECRET_KEY must be configured in production")
+    app.config.update(
+        SESSION_COOKIE_NAME="cyro_visitor",
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SAMESITE="Lax",
+        SESSION_COOKIE_SECURE=os.environ.get("SESSION_COOKIE_SECURE", "true" if os.environ.get("RENDER") else "false").lower() == "true",
+        PERMANENT_SESSION_LIFETIME=timedelta(days=30),
+    )
     db.init_db()
     app.register_blueprint(api_bp)
 
+    @app.before_request
+    def establish_anonymous_visitor():
+        visitor_id = browser_session.get("visitor_id")
+        if not visitor_id:
+            visitor_id = secrets.token_urlsafe(32)
+            browser_session["visitor_id"] = visitor_id
+        if not browser_session.get("csrf_token"):
+            browser_session["csrf_token"] = secrets.token_urlsafe(32)
+        browser_session.permanent = True
+        g.cyro_owner_token = db.set_owner(visitor_id)
+        db.init_db()
+
+    @app.teardown_request
+    def release_anonymous_visitor(_error=None):
+        token = getattr(g, "cyro_owner_token", None)
+        if token is not None:
+            db.reset_owner(token)
+
     @app.context_processor
     def inject():
-        return {"csrf_token": security.CSRF_TOKEN, "max_file_mb": config.MAX_FILE_MB, "lab_geo": config.LAB_SERVER_GEO}
+        return {"csrf_token": browser_session.get("csrf_token", ""), "max_file_mb": config.MAX_FILE_MB, "lab_geo": config.LAB_SERVER_GEO}
 
     @app.after_request
     def security_headers(resp):

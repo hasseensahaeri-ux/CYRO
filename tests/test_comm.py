@@ -9,7 +9,7 @@ import config
 
 config.DB_PATH = pathlib.Path(tempfile.mkdtemp()) / "comm.db"
 from app import create_app            # noqa: E402
-from backend import security           # noqa: E402
+from backend import db                  # noqa: E402
 from backend.engine import store       # noqa: E402
 
 
@@ -18,7 +18,9 @@ class CommTest(unittest.TestCase):
     def setUpClass(cls):
         cls.app = create_app()
         cls.c = cls.app.test_client()
-        cls.H = {"X-CSRF-Token": security.CSRF_TOKEN}
+        cls.c.get("/")
+        with cls.c.session_transaction() as browser:
+            cls.H = {"X-CSRF-Token": browser["csrf_token"]}
 
     def setUp(self):
         self.s = "comm-" + self._testMethodName.replace("test_", "")[:10].replace("_", "x") + "01"
@@ -38,7 +40,13 @@ class CommTest(unittest.TestCase):
         self.assertTrue(all(a["verified"] for a in inc["actions"]))
         self.assertEqual(self.ev("comm_send", encrypted=False, text="hello again")["outcome"], "dropped")   # policy enforced
         self.assertEqual(self.ev("comm_send", encrypted=True)["outcome"], "allowed")                         # encrypted still flows
-        stored = " ".join(str(e["details"]) for e in store.list_events(self.s, 100))
+        with self.c.session_transaction() as browser:
+            owner = browser["visitor_id"]
+        token = db.set_owner(owner)
+        try:
+            stored = " ".join(str(e["details"]) for e in store.list_events(owner + ":" + self.s, 100))
+        finally:
+            db.reset_owner(token)
         self.assertNotIn("4111", stored)                                              # the message text is never stored
 
     def test_tamper_rejection_blocks_attacker(self):
@@ -62,7 +70,13 @@ class CommTest(unittest.TestCase):
 
     def test_events_carry_illustrative_geo_and_show_on_map(self):
         self.ev("comm_inject", attack="tamper")
-        m = store.map_events(self.s, 50)
+        with self.c.session_transaction() as browser:
+            owner = browser["visitor_id"]
+        token = db.set_owner(owner)
+        try:
+            m = store.map_events(owner + ":" + self.s, 50)
+        finally:
+            db.reset_owner(token)
         self.assertTrue(m and m[0]["details"]["origin"].startswith("SIM-"))
 
     def test_validation(self):

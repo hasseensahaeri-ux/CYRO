@@ -8,6 +8,7 @@ import time
 from collections import defaultdict, deque
 from urllib.parse import urlsplit
 
+from .. import db
 from . import bus, rules, store
 from .rules import bi
 from ..scanners import phishing
@@ -379,7 +380,13 @@ def _ev_payload(e, outcome):
             "target": e["target"], "outcome": outcome, "details": small}
 
 
+def scoped_session(session):
+    owner = db.current_owner_session()
+    return f"{owner}:{session}" if owner else session
+
+
 def ingest(kind, source, target="", details=None, session="live", ts=None, delay=0.0):
+    session = scoped_session(session)
     details, ts = details or {}, ts or time.time()
     with _lock:
         drop = denied(session, kind, source, target, details)
@@ -393,6 +400,7 @@ def ingest(kind, source, target="", details=None, session="live", ts=None, delay
 
 
 def reset_session(session):
+    session = scoped_session(session)
     with _lock:
         for k in [k for k in _win if k[0] == session]:
             del _win[k]
