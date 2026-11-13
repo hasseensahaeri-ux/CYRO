@@ -1,0 +1,5 @@
+# Runtime data for anonymous visitors is private and must not be committed
+data/visitors/
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
