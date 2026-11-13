@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title_key %}nav_soc{% endblock %}
+{% block content %}
+<section class="soc-strip" id="socStrip"></section>
+<nav class="tabs" id="tabs" role="tablist">
+  <button class="tab is-active" data-tab="live" type="button" data-i18n="t_live"></button>
+  <button class="tab" data-tab="alerts" type="button" data-i18n="t_alerts"></button>
+  <button class="tab" data-tab="incidents" type="button" data-i18n="t_incidents"></button>
+  <button class="tab" data-tab="rules" type="button" data-i18n="t_rules"></button>
+  <button class="tab" data-tab="logs" type="button" data-i18n="t_logs"></button>
+</nav>
+
+<section class="panel tabpane" data-pane="live">
+  <div class="map-wrap" id="attackMap" data-lat="{{ lab_geo[0] }}" data-lon="{{ lab_geo[1] }}"></div>
+  <div class="map-legend"></div>
+  <h2 class="gap-top" data-i18n="c_rate"></h2><div class="chart small" id="rateChart"></div>
+  <h2 class="gap-top" data-i18n="t_live"></h2><div id="liveList" class="feed"></div>
+</section>
+<section class="panel tabpane" data-pane="alerts" hidden><div class="scroll-x" id="alertsTbl"></div></section>
+<section class="panel tabpane" data-pane="incidents" hidden>
+  <div class="scroll-x" id="incTbl"></div><div id="incDetail"></div>
+</section>
+<section class="panel tabpane" data-pane="rules" hidden><div class="scroll-x" id="rulesTbl"></div></section>
+<section class="panel tabpane" data-pane="logs" hidden>
+  <div class="ctl-row">
+    <select id="fKind" class="input"></select><select id="fOutcome" class="input"></select><select id="fSession" class="input"></select>
+    <label class="chk"><input type="checkbox" id="fProbes"><span data-i18n="l_probes"></span></label>
+    <button class="btn btn-sm" id="fApply" type="button" data-i18n="l_apply"></button>
+  </div>
+  <div class="scroll-x gap-top" id="logsTbl"></div>
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/tools.js') }}"></script><script src="{{ url_for('static', filename='js/attackmap.js') }}"></script><script src="{{ url_for('static', filename='js/soc.js') }}"></script>{% endblock %}

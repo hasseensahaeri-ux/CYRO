@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title_key %}nav_lab{% endblock %}
+{% block content %}
+<section class="panel">
+  <h2 data-i18n="lab_pick"></h2>
+  <div id="scnList" class="scn-grid"></div>
+</section>
+
+<section class="panel" id="scnInfo"></section>
+
+<section class="panel">
+  <div class="ctl-row">
+    <label class="ctl-speed"><span data-i18n="lab_speed"></span>
+      <select id="speed" class="input">
+        <option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option>
+      </select></label>
+    <button id="bStart" class="btn" type="button" data-i18n="lab_start"></button>
+    <button id="bPause" class="btn btn-ghost" type="button" data-i18n="lab_pause"></button>
+    <button id="bResume" class="btn btn-ghost" type="button" data-i18n="lab_resume"></button>
+    <button id="bStop" class="btn btn-ghost" type="button" data-i18n="lab_stop"></button>
+    <button id="bReset" class="btn btn-ghost" type="button" data-i18n="lab_reset"></button>
+    <span id="stateChip" class="chip"></span>
+  </div>
+  <div class="track lab-progress"><div class="fill" id="progFill"></div></div>
+  <div id="labMsg" class="msg" aria-live="polite"></div>
+</section>
+
+<section class="panel">
+  <h2 data-i18n="lab_pipeline"></h2>
+  <ol class="pipeline" id="pipe"></ol>
+</section>
+
+<section class="panel">
+  <h2 data-i18n="lab_map"></h2>
+  <div class="map-wrap" id="attackMap" data-lat="{{ lab_geo[0] }}" data-lon="{{ lab_geo[1] }}"></div>
+  <div class="map-legend"></div>
+  <p class="note" data-i18n="mp_note"></p>
+</section>
+
+<section class="lab-cols">
+  <div class="panel"><h2 data-i18n="lab_feed"></h2><div id="feed" class="feed"></div></div>
+  <div class="panel"><h2 data-i18n="lab_incidents"></h2><div id="incList" class="list"></div></div>
+</section>
+
+<section class="panel" id="labResult"></section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/tools.js') }}"></script><script src="{{ url_for('static', filename='js/attackmap.js') }}"></script><script src="{{ url_for('static', filename='js/lab.js') }}"></script>{% endblock %}

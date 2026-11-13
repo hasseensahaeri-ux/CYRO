@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="soc-strip" id="dashStrip" aria-live="polite"></section>
+
+<section class="panel">
+  <div class="panel-head"><h2 data-i18n="d_map"></h2><a class="btn btn-sm" href="/lab" data-i18n="d_demo"></a></div>
+  <div class="map-wrap" id="attackMap" data-lat="{{ lab_geo[0] }}" data-lon="{{ lab_geo[1] }}"></div>
+  <div class="map-legend"></div>
+  <p class="note" data-i18n="mp_note"></p>
+</section>
+
+<section class="grid2">
+  <article class="panel"><h2 data-i18n="d_timeline"></h2><div class="chart" id="tlChart"></div></article>
+  <article class="panel"><h2 data-i18n="d_severity"></h2><div id="sevChart"></div></article>
+  <article class="panel"><h2 data-i18n="d_attacks"></h2><div id="catChart" class="hbars"></div></article>
+  <article class="panel"><h2 data-i18n="d_top"></h2><div id="topList" class="list"></div></article>
+  <article class="panel">
+    <div class="panel-head"><h2 data-i18n="d_threats"></h2><button class="btn btn-ghost btn-sm" id="thRefresh" type="button" data-i18n="d_refresh"></button></div>
+    <div id="threatList" class="acc"></div>
+  </article>
+  <article class="panel"><h2 data-i18n="d_recent"></h2><div id="evList" class="list"></div></article>
+</section>
+<h2 class="section-title" data-i18n="d_scans"></h2>
+<section class="stats">
+  <article class="stat"><span class="stat-label" data-i18n="st_total"></span><strong class="stat-num" data-stat="total_scans">0</strong></article>
+  <article class="stat stat-danger"><span class="stat-label" data-i18n="st_threats"></span><strong class="stat-num" data-stat="threats">0</strong></article>
+  <article class="stat stat-warn"><span class="stat-label" data-i18n="st_urls"></span><strong class="stat-num" data-stat="suspicious_urls">0</strong></article>
+  <article class="stat"><span class="stat-label" data-i18n="st_files"></span><strong class="stat-num" data-stat="files_analyzed">0</strong></article>
+</section>
+
+<section class="grid">
+  <article class="panel gauge-panel">
+    <h2 data-i18n="pr_title"></h2>
+    <div class="gauge" id="gauge">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <circle class="g-track" cx="60" cy="60" r="52"/>
+        <circle class="g-bar" id="gaugeBar" cx="60" cy="60" r="52" transform="rotate(-90 60 60)"/>
+      </svg>
+      <div class="gauge-val"><strong id="gaugeNum">—</strong><span id="gaugeState" data-i18n="pr_none"></span></div>
+    </div>
+    <p class="note" data-i18n="pr_note"></p>
+  </article>
+
+  <article class="panel chart-panel">
+    <h2 data-i18n="ch_title"></h2>
+    <div class="chart" id="chart"></div>
+  </article>
+
+  <article class="panel">
+    <h2 data-i18n="rc_title"></h2>
+    <div id="recent" class="list"></div>
+  </article>
+
+  <article class="panel">
+    <h2><svg class="ico sm"><use href="#i-bell"/></svg><span data-i18n="al_title"></span></h2>
+    <div id="alerts" class="list"></div>
+  </article>
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/tools.js') }}"></script><script src="{{ url_for('static', filename='js/dashboard.js') }}"></script><script src="{{ url_for('static', filename='js/attackmap.js') }}"></script><script src="{{ url_for('static', filename='js/dashboard_soc.js') }}"></script>{% endblock %}

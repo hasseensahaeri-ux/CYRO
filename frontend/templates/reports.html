@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title_key %}nav_reports{% endblock %}
+{% block content %}
+<section class="panel">
+  <h2 data-i18n="rp_new"></h2>
+  <form id="repForm" novalidate>
+    <label class="field-label" for="repTitle" data-i18n="rp_title"></label>
+    <input id="repTitle" class="input" type="text" maxlength="100" autocomplete="off" data-i18n-ph="rp_title_ph">
+    <label class="field-label gap-top" for="repScope" data-i18n="rp_scope"></label>
+    <select id="repScope" class="input">
+      <option value="10" data-i18n="rp_last10"></option>
+      <option value="50" data-i18n="rp_last50"></option>
+      <option value="all" data-i18n="rp_all"></option>
+    </select>
+    <button class="btn" id="repBtn" type="submit" data-i18n="rp_create"></button>
+  </form>
+  <div id="repMsg" class="msg" aria-live="polite"></div>
+</section>
+<section class="panel"><h2 data-i18n="rp_saved"></h2><div id="repList" class="list"></div></section>
+<section class="panel"><h2 data-i18n="rp_history"></h2><div id="histList" class="list"></div></section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/tools.js') }}"></script><script src="{{ url_for('static', filename='js/reports.js') }}"></script>{% endblock %}

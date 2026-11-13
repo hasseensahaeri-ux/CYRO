@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title_key %}nav_phish{% endblock %}
+{% block content %}
+<section class="panel">
+  <form id="scanForm" data-kind="phishing" novalidate>
+    <label class="field-label" for="scanInput" data-i18n="ph_label"></label>
+    <textarea id="scanInput" class="input" rows="8" maxlength="20000" spellcheck="false" data-i18n-ph="ph_ph"></textarea>
+    <button id="scanBtn" class="btn" type="submit" data-i18n="ph_btn"></button>
+    <p class="note" data-i18n="ph_hint"></p>
+  </form>
+</section>
+<section class="panel" id="result" aria-live="polite"></section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/tools.js') }}"></script><script src="{{ url_for('static', filename='js/scan.js') }}"></script>{% endblock %}

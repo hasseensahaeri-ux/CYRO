@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title_key %}nav_comm{% endblock %}
+{% block content %}
+<div id="commRoot" class="comm">
+  <section class="panel">
+    <div class="panel-head"><h2 data-i18n="cm_protection"></h2>
+      <div class="btn-row presets">
+        <button class="btn btn-ghost btn-sm" type="button" data-preset="none" data-i18n="cm_p_none"></button>
+        <button class="btn btn-ghost btn-sm" type="button" data-preset="encrypted" data-i18n="cm_p_enc"></button>
+        <button class="btn btn-ghost btn-sm" type="button" data-preset="signed" data-i18n="cm_p_sig"></button>
+        <button class="btn btn-sm" type="button" data-preset="full" data-i18n="cm_p_full"></button>
+      </div>
+    </div>
+    <div class="toggles">
+      <label class="tgl"><input type="checkbox" id="tEnc"><span class="sw"></span><span><strong data-i18n="cm_t_enc"></strong><small data-i18n="cm_t_enc_d"></small></span></label>
+      <label class="tgl"><input type="checkbox" id="tSig"><span class="sw"></span><span><strong data-i18n="cm_t_sig"></strong><small data-i18n="cm_t_sig_d"></small></span></label>
+      <label class="tgl"><input type="checkbox" id="tAuth"><span class="sw"></span><span><strong data-i18n="cm_t_auth"></strong><small data-i18n="cm_t_auth_d"></small></span></label>
+      <label class="tgl"><input type="checkbox" id="tReplay"><span class="sw"></span><span><strong data-i18n="cm_t_replay"></strong><small data-i18n="cm_t_replay_d"></small></span></label>
+    </div>
+    <div class="chips" id="statusChips" aria-live="polite"></div>
+  </section>
+
+  <section class="panel scene">
+    <div class="stage">
+      <article class="actor sender" id="aSender">
+        <div class="actor-head"><svg class="ico"><use href="#i-user"/></svg><strong data-i18n="cm_sender"></strong><span class="chip mono" id="fpSender"></span></div>
+        <label class="field-label" for="msg" data-i18n="cm_msg"></label>
+        <textarea id="msg" class="input" rows="3" maxlength="200"></textarea>
+        <div class="btn-row"><button class="btn" id="bSend" type="button" data-i18n="cm_send"></button>
+          <button class="btn btn-ghost" id="bConnect" type="button" data-i18n="cm_connect"></button></div>
+      </article>
+
+      <div class="channel">
+        <div class="chan-title"><svg class="ico sm" id="lockIco"><use href="#i-lock"/></svg><strong data-i18n="cm_channel"></strong><span class="chip" id="chanLevel"></span></div>
+        <div class="zone" id="zone">
+          <div class="track" id="track"><span class="wire" id="wire"></span></div>
+          <article class="attacker" id="aAttacker">
+            <div class="actor-head"><svg class="ico"><use href="#i-spy"/></svg><strong data-i18n="cm_attacker"></strong><span class="badge" id="atkState"></span></div>
+            <div class="atk-pick" id="atkPick"></div>
+            <p class="note" id="atkDesc"></p>
+          </article>
+        </div>
+        <div class="wire-view" id="wireView"></div>
+      </div>
+
+      <article class="actor receiver" id="aReceiver">
+        <div class="actor-head"><svg class="ico"><use href="#i-user"/></svg><strong data-i18n="cm_receiver"></strong><span class="chip mono" id="fpReceiver"></span></div>
+        <div class="checks" id="checks"></div>
+        <div class="inbox" id="inbox"></div>
+      </article>
+    </div>
+    <div class="outcome" id="outcome"></div>
+  </section>
+
+  <section class="lab-cols">
+    <div class="panel"><div class="panel-head"><h2 data-i18n="cm_log"></h2><button class="btn btn-ghost btn-sm" id="bReset" type="button" data-i18n="cm_reset"></button></div><div id="logList" class="feed"></div></div>
+    <div class="panel"><h2 data-i18n="cm_defense"></h2><div id="defList" class="list"></div></div>
+  </section>
+  <p class="note" data-i18n="cm_safe"></p>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/tools.js') }}"></script><script src="{{ url_for('static', filename='js/comm-core.js') }}"></script><script src="{{ url_for('static', filename='js/comm.js') }}"></script>{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title_key %}nav_url{% endblock %}
+{% block content %}
+<section class="panel">
+  <form id="scanForm" data-kind="url" novalidate>
+    <label class="field-label" for="scanInput" data-i18n="url_label"></label>
+    <div class="input-row">
+      <input id="scanInput" class="input" type="text" dir="ltr" maxlength="2048" autocomplete="off" spellcheck="false" data-i18n-ph="url_ph">
+      <button id="scanBtn" class="btn" type="submit" data-i18n="url_btn"></button>
+    </div>
+    <p class="note" data-i18n="url_hint"></p>
+  </form>
+</section>
+<section class="panel" id="result" aria-live="polite"></section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/tools.js') }}"></script><script src="{{ url_for('static', filename='js/scan.js') }}"></script>{% endblock %}

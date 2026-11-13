@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title_key %}nav_quiz{% endblock %}
+{% block content %}
+<section class="panel" id="quiz" aria-live="polite"></section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/tools.js') }}"></script><script src="{{ url_for('static', filename='js/quiz.js') }}"></script>{% endblock %}

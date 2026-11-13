@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title_key %}nav_file{% endblock %}
+{% block content %}
+<section class="panel">
+  <form id="fileForm" data-max-mb="{{ max_file_mb }}" novalidate>
+    <label class="field-label" for="fileA" data-i18n="f_a"></label>
+    <input id="fileA" class="input" type="file">
+    <label class="field-label gap-top" for="fileB" data-i18n="f_b"></label>
+    <input id="fileB" class="input" type="file">
+    <label class="field-label gap-top" for="expected" data-i18n="f_exp"></label>
+    <input id="expected" class="input mono" type="text" maxlength="64" autocomplete="off" spellcheck="false" data-i18n-ph="f_exp_ph">
+    <button id="fileBtn" class="btn" type="submit" data-i18n="f_btn"></button>
+    <p class="note"><span data-i18n="f_hint"></span> <span id="maxMb">{{ max_file_mb }}</span> MB.</p>
+  </form>
+</section>
+<section class="panel" id="result" aria-live="polite"></section>
+<section class="panel"><h2 data-i18n="f_hist"></h2><div id="histBox" class="list"></div></section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/tools.js') }}"></script><script src="{{ url_for('static', filename='js/file.js') }}"></script>{% endblock %}
